@@ -9,19 +9,24 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    # Installs Python on the runner
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-cache-dependency-path: ''
 
-    # Installs PlatformIO on the runner
     - name: Install PlatformIO
       run: pip install -U platformio
 
-    # DEFINITIVE STEP: Run CI against your example sketch
-    # --lib="." links your root src/ folder natively as a library
-    # --board installs the precise cross-compilation hardware profiles
-    - name: Run Library Example Compilation
+    # DEFINITIVE COMPILATION TARGETS
+    # Automatically tracks down and boots compilers for AVR, Xtensa, RISC-V, and ARM
+    - name: Run Multi-Architecture Compilation
       run: |
-        pio ci --lib="." --board=uno --board=esp32dev examples/BasicUsage/BasicUsage.ino
+        pio ci --lib="." \
+          --board=uno \
+          --board=nanoatmega328 \
+          --board=esp32dev \
+          --board=esp32-s3-devkitc-1 \
+          --board=esp32-c3-devkitm-1 \
+          --board=esp32-c6-devkitc-1 \
+          --board=genericSTM32F405RG \
+          examples/BasicUsage/BasicUsage.ino
