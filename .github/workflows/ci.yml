@@ -22,3 +22,4 @@ jobs:
       run: |
         pio ci --lib="." --board=uno --board=esp32dev examples/BasicUsage/BasicUsage.ino
         pio ci --lib="." --board=uno --board=esp32dev examples/test/test.ino
+        pio ci --lib="." --lib="https : / / github . com / openlcb / OpenLCB_Single_Thread . git" --board=uno --board=esp32dev examples/test/test.ino
