@@ -18,16 +18,9 @@ jobs:
       run: pip install -U platformio
 
     # DEFINITIVE COMPILATION TARGETS
-    # Replaces legacy platform core with the patched pioarduino upstream package
+    # We lock the custom platform repository URL into a safe system environment variable
+    # This prevents the command line shell from parsing or splitting the URL string
     - name: Run Multi-Architecture Compilation
-      run: |
-        pio ci --lib="." \
-          --board=uno \
-          --board=nanoatmega328 \
-          --board=esp32dev \
-          --board=esp32-s3-devkitc-1 \
-          --board=esp32-c3-devkitm-1 \
-          --board=esp32-c6-devkitc-1 \
-          --board=genericSTM32F405RG \
-          --project-option="platform=https://github.com" \
-          examples/BasicUsage/BasicUsage.ino
+      env:
+        PLATFORMIO_PLATFORM_URL: https://github.com
+      run: pio ci --lib="." --board=uno --board=nanoatmega328 --board=esp32dev --board=esp32-s3-devkitc-1 --board=esp32-c3-devkitm-1 --board=esp32-c6-devkitc-1 --board=genericSTM32F405RG examples/BasicUsage/BasicUsage.ino
