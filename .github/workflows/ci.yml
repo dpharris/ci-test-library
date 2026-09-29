@@ -34,7 +34,8 @@ jobs:
       with:
         fqbn: ${{ matrix.board }}
         sketch-paths: examples/BasicUsage
-        # Flat text comma separation bypasses the input key parsing bug completely
         platforms: |
-          https://githubusercontent.com,
-          https://github.com
+          - name: "esp32:esp32"
+            source-url: "https://githubusercontent.com"
+          - name: "STMicroelectronics:stm32"
+            source-url: "https://github.com"
