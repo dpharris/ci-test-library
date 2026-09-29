@@ -18,7 +18,7 @@ jobs:
       run: pip install -U platformio
 
     # DEFINITIVE COMPILATION TARGETS
-    # Automatically tracks down and boots compilers for AVR, Xtensa, RISC-V, and ARM
+    # Explicitly overrides the C6 platform package to pull the latest working framework
     - name: Run Multi-Architecture Compilation
       run: |
         pio ci --lib="." \
@@ -29,4 +29,5 @@ jobs:
           --board=esp32-c3-devkitm-1 \
           --board=esp32-c6-devkitc-1 \
           --board=genericSTM32F405RG \
+          --project-option="platform_packages=framework-arduinoespressif32@https://github.com" \
           examples/BasicUsage/BasicUsage.ino
