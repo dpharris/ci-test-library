@@ -3,40 +3,38 @@ name: Arduino Native Test Build
 on: [push, pull_request]
 
 jobs:
-  build:
-    name: Compile for ${{ matrix.name }}
+  build-all-boards:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - board: "arduino:avr:uno"
-            name: "Arduino Uno (AVR)"
-          - board: "arduino:avr:nano"
-            name: "Arduino Nano (AVR)"
-          - board: "esp32:esp32:esp32"
-            name: "ESP32 Dev Module"
-          - board: "esp32:esp32:esp32s3"
-            name: "ESP32-S3 DevKit"
-          - board: "esp32:esp32:esp32c3"
-            name: "ESP32-C3 DevKit"
-          - board: "esp32:esp32:esp32c6"
-            name: "ESP32-C6 DevKit"
-          - board: "STMicroelectronics:stm32:Nucleo_64:pnum=NUCLEO_F401RE"
-            name: "STM32 Native CAN"
-
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
 
+    # 1. Install the official Arduino CLI binary
+    - name: Setup Arduino CLI
+      uses: arduino/setup-arduino-cli@v2
+
+    # 2. Register the exact same indices used by your desktop Arduino IDE
+    - name: Configure Core Registries
+      run: |
+        arduino-cli core update-index --additional-urls \
+          https://githubusercontent.com,\
+          https://github.com
+
+    # 3. Cleanly install the compiler toolchains step-by-step
+    - name: Install Toolchain Platforms
+      run: |
+        arduino-cli core install arduino:avr
+        arduino-cli core install esp32:esp32
+        arduino-cli core install STMicroelectronics:stm32
+
+    # 4. Sequentially compile your project library across every target board
+    # The --library "." flag forces the tool to link your root src/ directory natively
     - name: Compile Library Examples
-      uses: arduino/compile-sketches@v1
-      with:
-        fqbn: ${{ matrix.board }}
-        sketch-paths: examples/BasicUsage
-        # Correctly structured YAML sequence block for remote indexes
-        platforms: |
-          - name: "esp32:esp32"
-            source-url: "https://githubusercontent.com"
-          - name: "STMicroelectronics:stm32"
-            source-url: "https://github.com"
+      run: |
+        arduino-cli compile --library "." --fqbn arduino:avr:uno ./examples/BasicUsage
+        arduino-cli compile --library "." --fqbn arduino:avr:nano ./examples/BasicUsage
+        arduino-cli compile --library "." --fqbn esp32:esp32:esp32 ./examples/BasicUsage
+        arduino-cli compile --library "." --fqbn esp32:esp32:esp32s3 ./examples/BasicUsage
+        arduino-cli compile --library "." --fqbn esp32:esp32:esp32c3 ./examples/BasicUsage
+        arduino-cli compile --library "." --fqbn esp32:esp32:esp32c6 ./examples/BasicUsage
+        arduino-cli compile --library "." --fqbn STMicroelectronics:stm32:Nucleo_64:pnum=NUCLEO_F401RE ./examples/BasicUsage
