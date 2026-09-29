@@ -17,9 +17,17 @@ jobs:
     - name: Install PlatformIO
       run: pip install -U platformio
 
-    # THE INJECTED CORRECTION
-    # We use a native system environment variable block to protect the URL string
+    # DEFINITIVE COMPILATION TARGETS
+    # Replaces legacy platform core with the patched pioarduino upstream package
     - name: Run Multi-Architecture Compilation
-      env:
-        PLATFORMIO_PLATFORM_PACKAGES: framework-arduinoespressif32@https://github.com
-      run: pio ci --lib="." --board=uno --board=nanoatmega328 --board=esp32dev --board=esp32-s3-devkitc-1 --board=esp32-c3-devkitm-1 --board=esp32-c6-devkitc-1 --board=genericSTM32F405RG examples/BasicUsage/BasicUsage.ino
+      run: |
+        pio ci --lib="." \
+          --board=uno \
+          --board=nanoatmega328 \
+          --board=esp32dev \
+          --board=esp32-s3-devkitc-1 \
+          --board=esp32-c3-devkitm-1 \
+          --board=esp32-c6-devkitc-1 \
+          --board=genericSTM32F405RG \
+          --project-option="platform=https://github.com" \
+          examples/BasicUsage/BasicUsage.ino
