@@ -1,0 +1,21 @@
+name: PlatformIO Test Build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-cache-dependency-path: ''
+
+    - name: Install PlatformIO
+      run: pip install -U platformio
+
+    - name: Run Compilation Test
+      run: pio run
