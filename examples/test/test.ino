@@ -1,7 +1,7 @@
 // test ino
 
 #include "extras.h"
-#include "OlcMsg.h"
+#include "OlcbMsg.h"
 
 OlcbMsg m;
 
