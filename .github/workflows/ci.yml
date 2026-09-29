@@ -14,12 +14,12 @@ jobs:
 
     - name: Configure Core Registries
       env:
-        ARDUINO_BOARD_MANAGER_ADDITIONAL_URLS: "https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json https://github.com"
+        ARDUINO_BOARD_MANAGER_ADDITIONAL_URLS: "https://githubusercontent.com"
       run: arduino-cli core update-index
 
     - name: Install Toolchain Platforms
       env:
-        ARDUINO_BOARD_MANAGER_ADDITIONAL_URLS: "https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json https://github.com"
+        ARDUINO_BOARD_MANAGER_ADDITIONAL_URLS: "https://githubusercontent.com"
       run: |
         arduino-cli core install arduino:avr
         arduino-cli core install esp32:esp32
