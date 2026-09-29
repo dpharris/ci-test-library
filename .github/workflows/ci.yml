@@ -21,3 +21,4 @@ jobs:
     - name: Run Library Example Compilation
       run: |
         pio ci --lib="." --board=uno --board=esp32dev examples/BasicUsage/BasicUsage.ino
+        pio ci --lib="." --board=uno --board=esp32dev examples/test/test.ino
