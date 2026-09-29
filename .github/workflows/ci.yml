@@ -9,19 +9,21 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    # The action automatically installs the tool globally to the host PATH
     - name: Setup Arduino CLI
       uses: arduino/setup-arduino-cli@v2
 
-    - name: Configure Core Registries
+    # CRITICAL CHANGE: This completely overwrites and deletes the corrupt, cached index URL files
+    - name: Reset and Configure Clean Registries
       run: |
-        arduino-cli core update-index --additional-urls https://githubusercontent.com
+        arduino-cli config init --overwrite
+        arduino-cli config set board_manager.additional_urls https://githubusercontent.com
+        arduino-cli core update-index
 
     - name: Install Toolchain Platforms
       run: |
-        arduino-cli core install arduino:avr --additional-urls https://githubusercontent.com
-        arduino-cli core install esp32:esp32 --additional-urls https://githubusercontent.com
-        arduino-cli core install STMicroelectronics:stm32 --additional-urls https://githubusercontent.com
+        arduino-cli core install arduino:avr
+        arduino-cli core install esp32:esp32
+        arduino-cli core install STMicroelectronics:stm32
 
     - name: Compile Library Examples
       run: |
