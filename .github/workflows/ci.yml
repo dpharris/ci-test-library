@@ -1,26 +1,41 @@
-name: PlatformIO Test Build
+name: Arduino Native Test Build
 
 on: [push, pull_request]
 
 jobs:
   build:
+    name: Compile for ${{ matrix.name }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - board: "arduino:avr:uno"
+            name: "Arduino Uno (AVR)"
+          - board: "arduino:avr:nano"
+            name: "Arduino Nano (AVR)"
+          - board: "esp32:esp32:esp32"
+            name: "ESP32 Dev Module"
+          - board: "esp32:esp32:esp32s3"
+            name: "ESP32-S3 DevKit"
+          - board: "esp32:esp32:esp32c3"
+            name: "ESP32-C3 DevKit"
+          - board: "esp32:esp32:esp32c6"
+            name: "ESP32-C6 DevKit"
+          - board: "STMicroelectronics:stm32:Nucleo_64:pnum=NUCLEO_F401RE"
+            name: "STM32 Native CAN"
+
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
+    # The official, painless Arduino core compilation action
+    - name: Compile Library Examples
+      uses: arduino/compile-sketches@v1
       with:
-        python-cache-dependency-path: ''
-
-    - name: Install PlatformIO
-      run: pip install -U platformio
-
-    # DEFINITIVE COMPILATION TARGETS
-    # We lock the custom platform repository URL into a safe system environment variable
-    # This prevents the command line shell from parsing or splitting the URL string
-    - name: Run Multi-Architecture Compilation
-      env:
-        PLATFORMIO_PLATFORM_URL: https://github.com
-      run: pio ci --lib="." --board=uno --board=nanoatmega328 --board=esp32dev --board=esp32-s3-devkitc-1 --board=esp32-c3-devkitm-1 --board=esp32-c6-devkitc-1 --board=genericSTM32F405RG examples/BasicUsage/BasicUsage.ino
+        fqbn: ${{ matrix.board }}
+        sketch-paths: examples/BasicUsage
+        # Direct paths to Espressif & STM32 core index registries
+        additional-urls: |
+          https://githubusercontent.com
+          https://github.com
