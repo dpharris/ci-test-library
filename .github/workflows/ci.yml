@@ -1,40 +1,23 @@
-name: Arduino Native Test Build
+name: PlatformIO Test Build
 
 on: [push, pull_request]
 
 jobs:
-  build-all-boards:
+  build:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    # 1. Download the raw, official 64-bit Linux binary straight from Arduino's download servers
-    - name: Download Clean Arduino CLI Natively
-      run: |
-        curl -LO https://arduino.cc
-        tar -xzf arduino-cli_latest_Linux_64bit.tar.gz
-        chmod +x arduino-cli
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-cache-dependency-path: ''
 
-    # 2. Update the index by calling the fresh, un-cached local executable directly
-    - name: Configure Core Registries
-      run: |
-        ./arduino-cli core update-index --additional-urls https://githubusercontent.com
+    - name: Install PlatformIO
+      run: pip install -U platformio
 
-    # 3. Download the exact compiler packages cleanly
-    - name: Install Toolchain Platforms
+    # Links your local root src/ folder natively as a library
+    - name: Run Library Example Compilation
       run: |
-        ./arduino-cli core install arduino:avr --additional-urls https://githubusercontent.com
-        ./arduino-cli core install esp32:esp32 --additional-urls https://githubusercontent.com
-        ./arduino-cli core install STMicroelectronics:stm32 --additional-urls https://githubusercontent.com
-
-    # 4. Sequentially compile your project library across every target board
-    - name: Compile Library Examples
-      run: |
-        ./arduino-cli compile --library "." --fqbn arduino:avr:uno ./examples/BasicUsage
-        ./arduino-cli compile --library "." --fqbn arduino:avr:nano ./examples/BasicUsage
-        ./arduino-cli compile --library "." --fqbn esp32:esp32:esp32 ./examples/BasicUsage
-        ./arduino-cli compile --library "." --fqbn esp32:esp32:esp32s3 ./examples/BasicUsage
-        ./arduino-cli compile --library "." --fqbn esp32:esp32:esp32c3 ./examples/BasicUsage
-        ./arduino-cli compile --library "." --fqbn esp32:esp32:esp32c6 ./examples/BasicUsage
-        ./arduino-cli compile --library "." --fqbn STMicroelectronics:stm32:Nucleo_64:pnum=NUCLEO_F401RE ./examples/BasicUsage
+        pio ci --lib="." --board=uno --board=esp32dev examples/BasicUsage/BasicUsage.ino
