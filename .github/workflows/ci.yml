@@ -9,25 +9,17 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
 
+    # Installs Python on the runner
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-cache-dependency-path: ''
 
+    # Installs PlatformIO on the runner
     - name: Install PlatformIO
       run: pip install -U platformio
 
     # DEFINITIVE COMPILATION TARGETS
-    # Explicitly overrides the C6 platform package to pull the latest working framework
+    # Kept on a single line to guarantee the framework URLs resolve smoothly
     - name: Run Multi-Architecture Compilation
-      run: |
-        pio ci --lib="." \
-          --board=uno \
-          --board=nanoatmega328 \
-          --board=esp32dev \
-          --board=esp32-s3-devkitc-1 \
-          --board=esp32-c3-devkitm-1 \
-          --board=esp32-c6-devkitc-1 \
-          --board=genericSTM32F405RG \
-          --project-option="platform_packages=framework-arduinoespressif32@https://github.com" \
-          examples/BasicUsage/BasicUsage.ino
+      run: pio ci --lib="." --board=uno --board=nanoatmega328 --board=esp32dev --board=esp32-s3-devkitc-1 --board=esp32-c3-devkitm-1 --board=esp32-c6-devkitc-1 --board=genericSTM32F405RG --project-option="platform_packages=framework-arduinoespressif32@https://github.com" examples/BasicUsage/BasicUsage.ino
