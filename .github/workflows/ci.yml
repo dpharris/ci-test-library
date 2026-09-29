@@ -34,6 +34,7 @@ jobs:
       with:
         fqbn: ${{ matrix.board }}
         sketch-paths: examples/BasicUsage
+        # Correctly structured YAML sequence block for remote indexes
         platforms: |
           - name: "esp32:esp32"
             source-url: "https://githubusercontent.com"
