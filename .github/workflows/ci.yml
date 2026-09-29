@@ -29,13 +29,11 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    # The official, painless Arduino core compilation action
     - name: Compile Library Examples
       uses: arduino/compile-sketches@v1
       with:
         fqbn: ${{ matrix.board }}
         sketch-paths: examples/BasicUsage
-        # Direct paths to Espressif & STM32 core index registries
-        additional-urls: |
-          https://githubusercontent.com
-          https://github.com
+        platforms: |
+          - url: https://githubusercontent.com
+          - url: https://github.com
