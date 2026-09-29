@@ -12,11 +12,14 @@ jobs:
     - name: Setup Arduino CLI
       uses: arduino/setup-arduino-cli@v2
 
-    # CRITICAL CHANGE: Keeping the URLs on one solid line prevents the command-line tool from splitting them
     - name: Configure Core Registries
-      run: arduino-cli core update-index --additional-urls https://githubusercontent.com
+      env:
+        ARDUINO_BOARD_MANAGER_ADDITIONAL_URLS: "https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json https://github.com"
+      run: arduino-cli core update-index
 
     - name: Install Toolchain Platforms
+      env:
+        ARDUINO_BOARD_MANAGER_ADDITIONAL_URLS: "https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json https://github.com"
       run: |
         arduino-cli core install arduino:avr
         arduino-cli core install esp32:esp32
