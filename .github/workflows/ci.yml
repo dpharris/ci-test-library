@@ -9,31 +9,31 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    # 1. Install raw arduino-cli via official installation script
-    - name: Install Arduino CLI Natively
-      run: |
-        curl -fsSL https://githubusercontent.com | sh
-        echo "$HOME/bin" >> $GITHUB_PATH
+    # 1. Force the binary installer to place arduino-cli directly inside the root working folder
+    - name: Setup Arduino CLI
+      uses: arduino/setup-arduino-cli@v2
+      with:
+        bin-dir: '.'
 
-    # 2. Update index by explicitly passing the single, solid string directly to the command line
+    # 2. Update index by calling the local binary directly
     - name: Configure Core Registries
       run: |
-        $HOME/bin/arduino-cli core update-index --additional-urls https://githubusercontent.com
+        ./arduino-cli core update-index --additional-urls https://githubusercontent.com
 
-    # 3. Download the exact compiler packages
+    # 3. Download the exact compiler packages cleanly
     - name: Install Toolchain Platforms
       run: |
-        $HOME/bin/arduino-cli core install arduino:avr --additional-urls https://githubusercontent.com
-        $HOME/bin/arduino-cli core install esp32:esp32 --additional-urls https://githubusercontent.com
-        $HOME/bin/arduino-cli core install STMicroelectronics:stm32 --additional-urls https://githubusercontent.com
+        ./arduino-cli core install arduino:avr --additional-urls https://githubusercontent.com
+        ./arduino-cli core install esp32:esp32 --additional-urls https://githubusercontent.com
+        ./arduino-cli core install STMicroelectronics:stm32 --additional-urls https://githubusercontent.com
 
     # 4. Sequentially compile your project library across every target board
     - name: Compile Library Examples
       run: |
-        $HOME/bin/arduino-cli compile --library "." --fqbn arduino:avr:uno ./examples/BasicUsage
-        $HOME/bin/arduino-cli compile --library "." --fqbn arduino:avr:nano ./examples/BasicUsage
-        $HOME/bin/arduino-cli compile --library "." --fqbn esp32:esp32:esp32 ./examples/BasicUsage
-        $HOME/bin/arduino-cli compile --library "." --fqbn esp32:esp32:esp32s3 ./examples/BasicUsage
-        $HOME/bin/arduino-cli compile --library "." --fqbn esp32:esp32:esp32c3 ./examples/BasicUsage
-        $HOME/bin/arduino-cli compile --library "." --fqbn esp32:esp32:esp32c6 ./examples/BasicUsage
-        $HOME/bin/arduino-cli compile --library "." --fqbn STMicroelectronics:stm32:Nucleo_64:pnum=NUCLEO_F401RE ./examples/BasicUsage
+        ./arduino-cli compile --library "." --fqbn arduino:avr:uno ./examples/BasicUsage
+        ./arduino-cli compile --library "." --fqbn arduino:avr:nano ./examples/BasicUsage
+        ./arduino-cli compile --library "." --fqbn esp32:esp32:esp32 ./examples/BasicUsage
+        ./arduino-cli compile --library "." --fqbn esp32:esp32:esp32s3 ./examples/BasicUsage
+        ./arduino-cli compile --library "." --fqbn esp32:esp32:esp32c3 ./examples/BasicUsage
+        ./arduino-cli compile --library "." --fqbn esp32:esp32:esp32c6 ./examples/BasicUsage
+        ./arduino-cli compile --library "." --fqbn STMicroelectronics:stm32:Nucleo_64:pnum=NUCLEO_F401RE ./examples/BasicUsage
